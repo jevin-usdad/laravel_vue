@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
+use Inertia\Inertia;
 use App\Models\Permission;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+use Illuminate\Support\Facades\Gate;
 
 class RoleController extends Controller
 {
     public function index()
     {
-        $this->authorize('viewAny', Role::class);
+        Gate::authorize('viewAny', Role::class);
 
         return Inertia::render('Roles/Index', [
             'roles' => Role::with('permissions')->get(),
@@ -21,7 +22,7 @@ class RoleController extends Controller
 
     public function store(Request $request)
     {
-        $this->authorize('create', Role::class);
+        Gate::authorize('create', Role::class);
 
         $data = $request->validate([
             'name' => 'required|string|unique:roles,name',
@@ -36,7 +37,7 @@ class RoleController extends Controller
 
     public function update(Request $request, Role $role)
     {
-        $this->authorize('update', $role);
+        Gate::authorize('update', $role);
 
         $data = $request->validate([
             'name' => 'required|string|unique:roles,name,' . $role->id,
@@ -51,7 +52,7 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
-        $this->authorize('delete', $role);
+        Gate::authorize('delete', $role);
 
         $role->delete();
 
