@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import { BookOpen, Folder, LayoutGrid, Shield } from 'lucide-vue-next';
 
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
+import { useCan } from '@/composables/useCan'
 import {
     Sidebar,
     SidebarContent,
@@ -16,35 +17,44 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import users from '@/routes/users'
+import roles from '@/routes/roles'
 import { type NavItem } from '@/types';
 
 import AppLogo from './AppLogo.vue';
 
+const can = useCan()
+
+
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard(),
+        href: dashboard().url,
         icon: LayoutGrid,
     },
-    {
+    can.users.view && {
         title: 'Users',
-        href: users.index(),
+        href: users.index().url,
         icon: LayoutGrid,
     },
+    can.roles.view && {
+        title: 'Roles',
+        href: roles.index().url,
+        icon: Shield,
+    },
+].filter(Boolean) as NavItem[]
 
-];
 
 const footerNavItems: NavItem[] = [
-    {
-        title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
+    // {
+    //     title: 'Github Repo',
+    //     href: 'https://github.com/laravel/vue-starter-kit',
+    //     icon: Folder,
+    // },
+    // {
+    //     title: 'Documentation',
+    //     href: 'https://laravel.com/docs/starter-kits#vue',
+    //     icon: BookOpen,
+    // },
 ];
 </script>
 

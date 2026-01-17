@@ -49,4 +49,21 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        return cache()->remember(
+            "user:{$this->id}:perm:{$permission}",
+            60,
+            fn() => $this->roles()
+                ->whereHas('permissions', fn($q) => $q->where('name', $permission))
+                ->exists()
+        );
+    }
+
 }
